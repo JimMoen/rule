@@ -139,6 +139,11 @@ DNS server，明确查询 Tailscale 内置解析器 `100.100.100.100`，并通�
 其他参数的 outbound 判定为 empty direct；实际 `.ts.net` 查询由 `tailscale`
 DNS server 完成，路由会在连接前把它转换为 IP。
 
+Apple/Windows 图形客户端的系统 HTTP 代理还会通过
+`platform.http_proxy.bypass_domain` 让 `.ts.net` 直接绕过本地代理端口。
+sing-box 1.14 没有 `platform.http_proxy.bypass_cidr`；Tailscale IP 段由
+`route_exclude_address` 和路由中的 `ip_cidr` 处理。
+
 Linux 模板还会对 TCP 22 在 `auto_redirect` 的 pre-match 阶段直接 bypass。
 这样 SSH 不经过 sing-box 的 TUN/direct 用户态路径，避免 banner 交换阶段被
 重置；通过 mixed inbound 主动使用代理的 SSH 不会被这条 bypass 规则截获。
