@@ -6,4 +6,7 @@
 1.13X版本：客户端配置适配 官方内核，momo，reF1nd版内核  
 1.14X版本：客户端配置适配 官方内核（mini为纯自建节点专用），momo，reF1nd版内核，linux/windows/iphone等不同版本，VPS为自建节点服务端+客户端配套配置
 
+Linux 单核心、systemd、Tailscale Serve WebUI 和 Sub-Store 定时更新方案见
+`config/singbox/1.14X/linux/README.md`。
+
 testing版本，跟随官方测试版本，可能不会那么的及时。

@@ -11,6 +11,7 @@
     ],
     "rules": [
       {"query_type": ["HTTPS", "SVCB"], "action": "reject"},
+      {"domain_suffix": [".ts.net"], "server": "local"},
       {"clash_mode": "Direct", "server": "ali"},
       {"clash_mode": "Global", "server": "fakeip"},
       {"rule_set": ["fakeipfilter-cn", "geosite-cn", "geosite-microsoft@cn", "geosite-apple@cn", "geosite-private"], "server": "ali"},
@@ -78,6 +79,8 @@
   ],
   "route": {
     "rules": [
+      {"ip_cidr": ["100.64.0.0/10", "fd7a:115c:a1e0::/48"], "action": "bypass"},
+      {"network": "tcp", "port": 22, "action": "bypass"},
       {"type": "logical", "mode": "and", "rules": [{"port": [53, 853], "invert": true}, {"clash_mode": "Global", "invert": true}, {"type": "logical", "mode": "or", "rules": [{"ip_is_private": true}, {"rule_set": "geoip-cn"}]}], "action": "bypass"},
       {"type": "logical", "mode": "or", "rules": [{"domain_suffix": "push.apple.com"}, {"rule_set": "geoip-telegram"}], "invert": true, "action": "sniff", "sniffer": ["http", "tls", "stun", "quic", "dns"], "timeout": "100ms"},
       {"type": "logical", "mode": "or", "rules": [{"port": 53}, {"protocol": "dns"}], "action": "hijack-dns"},
@@ -130,7 +133,10 @@
         "198.18.0.1/30"
       ],
       "auto_route": true,
-      "auto_redirect": true
+      "auto_redirect": true,
+      "stack": "gvisor",
+      "route_exclude_address": ["100.64.0.0/10", "fd7a:115c:a1e0::/48"],
+      "exclude_interface": ["tailscale0"]
     },
     {
       "tag": "mixed-in",
@@ -142,12 +148,12 @@
   "services": [
     {
       "type": "api",
-      "listen": "0.0.0.0",
+      "listen": "127.0.0.1",
       "listen_port": 9090,
       "secret": "passwd",
       "dashboard": {
         "enabled": true,
-        "path": "/etc/sing-box/dashboard",
+        "path": "/var/lib/sing-box/dashboard",
         "download_url": "https://gh-proxy.com/https://github.com/SagerNet/sing-box-dashboard/archive/refs/heads/gh-pages.zip"
       }
     }
@@ -155,12 +161,12 @@
   "experimental": {
     "cache_file": {
       "enabled": true,
-      "path": "/etc/sing-box/cache.db",
+      "path": "/var/lib/sing-box/cache.db",
       "store_dns": true
     },
     "clash_api": {
-      "external_controller": "0.0.0.0:9095",
-      "external_ui": "/etc/sing-box/ui",
+      "external_controller": "127.0.0.1:9095",
+      "external_ui": "/var/lib/sing-box/ui",
       "secret": "passwd",
       "default_mode": "Rule"
     }

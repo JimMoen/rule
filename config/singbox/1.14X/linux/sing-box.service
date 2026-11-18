@@ -1,0 +1,30 @@
+[Unit]
+Description=sing-box proxy core
+Documentation=https://sing-box.sagernet.org/
+Wants=network-online.target
+After=network-online.target
+ConditionPathExists=/var/lib/sing-box/config.json
+
+[Service]
+Type=simple
+User=sing-box
+Group=sing-box
+StateDirectory=sing-box
+StateDirectoryMode=0700
+WorkingDirectory=/var/lib/sing-box
+ExecStartPre=/usr/bin/sing-box check -c /var/lib/sing-box/config.json
+ExecStart=/usr/bin/sing-box -D /var/lib/sing-box -c /var/lib/sing-box/config.json run
+Restart=on-failure
+RestartSec=3s
+LimitNOFILE=65535
+UMask=0027
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_RAW CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_RAW CAP_NET_BIND_SERVICE
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/sing-box
+
+[Install]
+WantedBy=multi-user.target

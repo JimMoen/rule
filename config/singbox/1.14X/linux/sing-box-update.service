@@ -1,0 +1,13 @@
+[Unit]
+Description=Update sing-box configuration from Sub-Store
+Wants=network-online.target
+After=network-online.target sing-box.service
+ConditionPathExists=/etc/sing-box/substore.env
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/sing-box/substore.env
+ExecStart=/usr/local/libexec/sing-box-update-config
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
