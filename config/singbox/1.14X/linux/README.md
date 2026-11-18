@@ -135,6 +135,9 @@ mixed inbound 通过系统 HTTP 代理收到 `.ts.net` 域名时，普通 `直�
 DNS server，明确查询 Tailscale 内置解析器 `100.100.100.100`，并通过
 `Tailscale直连` 实际发送 DNS 请求。这样不依赖 macOS `local` resolver 是否正确
 继承 Tailscale 的 Split DNS，也不要求 systemd-resolved 自己能解析 MagicDNS。
+`Tailscale直连` 仍声明 `local` resolver，仅用于避免 DNS transport 把没有
+其他参数的 outbound 判定为 empty direct；实际 `.ts.net` 查询由 `tailscale`
+DNS server 完成，路由会在连接前把它转换为 IP。
 
 Linux 模板还会对 TCP 22 在 `auto_redirect` 的 pre-match 阶段直接 bypass。
 这样 SSH 不经过 sing-box 的 TUN/direct 用户态路径，避免 banner 交换阶段被
