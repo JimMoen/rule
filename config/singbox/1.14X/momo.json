@@ -3,6 +3,7 @@
   "dns": {
     "servers": [
       {"tag": "local", "type": "local", "prefer_go": true},
+      {"tag": "tailscale", "type": "udp", "server": "100.100.100.100", "detour": "Tailscale直连"},
       {"tag": "ali", "type": "https", "server": "223.5.5.5"},
       {"tag": "tx", "type": "https", "server": "doh.pub", "domain_resolver": "hosts"},
       {"tag": "google", "type": "https", "server": "8.8.8.8", "detour": "默认代理"},
@@ -11,7 +12,7 @@
     ],
     "rules": [
       {"query_type": ["HTTPS", "SVCB"], "action": "reject"},
-      {"domain_suffix": [".ts.net"], "server": "local"},
+      {"domain_suffix": [".ts.net"], "server": "tailscale"},
       {"clash_mode": "Direct", "server": "ali"},
       {"clash_mode": "Global", "server": "fake-ip-dns-server"},
       {"rule_set": ["fakeipfilter-cn", "geosite-cn", "geosite-microsoft@cn", "geosite-apple@cn", "geosite-private"], "server": "ali"},
@@ -54,14 +55,14 @@
     {"tag": "延迟辅助", "type": "urltest", "outbounds": ["直连"], "url": "http://connect.rom.miui.com/generate_204", "interval": "30m"},
     {"tag": "GLOBAL", "type": "selector", "outbounds": ["默认代理", "AI", "YouTube", "Google", "Github", "Telegram", "TikTok", "Netflix", "Wallet", "Steam", "Microsoft", "OneDrive", "Apple", "漏网之鱼", "日本手动", "狮城手动", "香港手动", "美国手动", "日本自动", "狮城自动", "香港自动", "美国自动", "手动选择", "自动选择", "延迟辅助", "直连"]},
     {"tag": "直连", "type": "direct", "domain_resolver": "ali"},
-    {"tag": "Tailscale直连", "type": "direct", "domain_resolver": "local"}
+    {"tag": "Tailscale直连", "type": "direct"}
   ],
   "http_clients": [
     {"tag": "直连下载", "detour": "直连"}
   ],
   "route": {
     "rules": [
-      {"domain_suffix": [".ts.net"], "outbound": "Tailscale直连"},
+      {"domain_suffix": [".ts.net"], "action": "resolve", "server": "tailscale"},
       {"ip_cidr": ["100.64.0.0/10", "fd7a:115c:a1e0::/48"], "outbound": "Tailscale直连"},
       {"type": "logical", "mode": "or", "rules": [{"domain_suffix": "push.apple.com"}, {"rule_set": "geoip-telegram"}], "invert": true, "action": "sniff", "sniffer": ["http", "tls", "stun", "quic", "dns"], "timeout": "100ms"},
       {"inbound": "dns-in", "action": "hijack-dns"},

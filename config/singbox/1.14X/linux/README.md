@@ -120,8 +120,8 @@ https://<linux-host>.<tailnet>.ts.net:9090/dashboard/
 1.14X Linux 模板包含四层 Tailscale 保护：
 
 ```text
-DNS: .ts.net -> local（避免 MagicDNS 被 FakeIP 接管）
-Route: .ts.net -> Tailscale直连（使用 local resolver，避免 ali 返回 NXDOMAIN）
+DNS: .ts.net -> tailscale（显式查询 100.100.100.100）
+Route: .ts.net -> resolve via tailscale，再按 IP 路由到 Tailscale直连
 TUN: route_exclude_address + exclude_interface tailscale0
 Route: 100.64.0.0/10 和 fd7a:115c:a1e0::/48 在 pre-match bypass
 ```
@@ -131,10 +131,10 @@ Route: 100.64.0.0/10 和 fd7a:115c:a1e0::/48 在 pre-match bypass
 如果使用了自定义 MagicDNS 后缀，把该后缀加入 DNS 规则的 `domain_suffix`。
 
 mixed inbound 通过系统 HTTP 代理收到 `.ts.net` 域名时，普通 `直连` outbound
-会使用 `ali` resolver，可能得到 `NXDOMAIN`。`Tailscale直连` 显式使用系统
-`local` resolver，因此要求操作系统 DNS 能解析 MagicDNS。Linux/NixOS 上应保持
-Tailscale 的 `accept-dns=true`，并确认 systemd-resolved 或其他本地解析器能查询
-`*.ts.net`。
+会使用 `ali` resolver，可能得到 `NXDOMAIN`。模板因此使用独立的 `tailscale`
+DNS server，明确查询 Tailscale 内置解析器 `100.100.100.100`，并通过
+`Tailscale直连` 实际发送 DNS 请求。这样不依赖 macOS `local` resolver 是否正确
+继承 Tailscale 的 Split DNS，也不要求 systemd-resolved 自己能解析 MagicDNS。
 
 Linux 模板还会对 TCP 22 在 `auto_redirect` 的 pre-match 阶段直接 bypass。
 这样 SSH 不经过 sing-box 的 TUN/direct 用户态路径，避免 banner 交换阶段被
