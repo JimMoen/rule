@@ -72,6 +72,12 @@
       "tag": "直连",
       "type": "direct",
       "domain_resolver": "ali"
+    },
+    {
+      "tag": "Tailscale直连",
+      "type": "direct",
+      "domain_resolver": "local",
+      "bind_interface": "tailscale0"
     }
   ],
   "http_clients": [
@@ -79,6 +85,7 @@
   ],
   "route": {
     "rules": [
+      {"domain_suffix": [".ts.net"], "outbound": "Tailscale直连"},
       {"ip_cidr": ["100.64.0.0/10", "fd7a:115c:a1e0::/48"], "action": "bypass"},
       {"network": "tcp", "port": 22, "action": "bypass"},
       {"type": "logical", "mode": "and", "rules": [{"port": [53, 853], "invert": true}, {"clash_mode": "Global", "invert": true}, {"type": "logical", "mode": "or", "rules": [{"ip_is_private": true}, {"rule_set": "geoip-cn"}]}], "action": "bypass"},
