@@ -2,9 +2,8 @@
 Description=Periodically update sing-box from Sub-Store
 
 [Timer]
-OnBootSec=2min
-OnUnitActiveSec=30min
-RandomizedDelaySec=2min
+OnCalendar=*-*-* 04:00:00
+RandomizedDelaySec=5min
 Persistent=true
 
 [Install]
