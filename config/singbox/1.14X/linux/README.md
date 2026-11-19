@@ -141,6 +141,8 @@ DNS server 完成，路由会在连接前把它转换为 IP。
 
 Apple/Windows 图形客户端的系统 HTTP 代理还会通过
 `platform.http_proxy.bypass_domain` 让 `.ts.net` 直接绕过本地代理端口。
+Apple 使用后缀形式 `.ts.net`；Windows WinINet 使用通配符形式
+`*.ts.net`。
 sing-box 1.14 没有 `platform.http_proxy.bypass_cidr`；Tailscale IP 段由
 `route_exclude_address` 和路由中的 `ip_cidr` 处理。
 
